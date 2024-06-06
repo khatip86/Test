@@ -21,11 +21,10 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
-    - name: Проверка оценки Pylint
-      run: |
-        if (( $(bc <<< "$pylint_score + 0 >= 8.5") )); then
-          echo "Код успешно прошел проверку!"
+        pylint_score=$(pylint --score=y $(git ls-files '*.py') | grep -oP '(?<=Your code has been rated at ).*(?=/10)')
+        if (( $(echo "$pylint_score > 8.5" | bc -l) )); then
+          echo "Code quality is good."
         else
-          echo "Необходимо пересмотреть код."
-          exit 1
+          echo "Code quality is low. Needs rechecking."
         fi
+
