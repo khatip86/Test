@@ -1,39 +1,26 @@
-name: Проверка кода
+name: Pylint
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
-  lint:
-    name: Проверка оценки Pylint
+  build:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        python-version: ["3.12"]
     steps:
-    - name: Checkout репозитория
-      uses: actions/checkout@v2
-
-    - name: Установка Python
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
       with:
-        python-version: '3.12'
-
-    - name: Установка зависимостей
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pylint pulp
-
-    - name: Клонирование репозитория
+    - name: Analysing the code with pylint
       run: |
-        git clone https://github.com/khatip86/project_hub.git
-        cd project_hub
-
-    - name: Запуск Pylint
-      run: |
-        pylint_score=$(find . -name "*.py" -exec pylint {} --score=n \; | cut -d" " -f2 | sort -nr | head -1)
-        echo "Pylint score: $pylint_score"
-
+        pylint $(git ls-files '*.py')
     - name: Проверка оценки Pylint
       run: |
         if (( $(bc <<< "$pylint_score + 0 >= 8.5") )); then
