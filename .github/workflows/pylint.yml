@@ -22,8 +22,8 @@ jobs:
       run: |
         pylint_score=$(pylint --score=y $(git ls-files '*.py') | grep -oP '(?<=Your code has been rated at ).*(?=/10)')
         if (( $(echo "$pylint_score > 8.5" | bc -l) )); then
-          echo "Code quality is good."
+          echo "Проверка прошла успешно!"
         else
-          echo "Code quality is low. Needs rechecking."
+          echo "Пересмотрите код..."
         fi
 
