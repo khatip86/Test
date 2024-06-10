@@ -30,3 +30,7 @@ jobs:
           echo "Пересмотрите код! Оценка Pylint: $pylint_score"
           exit 1
         fi
+    - name: Display Pylint score
+      run: |
+        pylint_score=$(cat pylint_score.txt)
+        echo "Оценка Pylint: $pylint_score"
